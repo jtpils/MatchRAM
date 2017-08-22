@@ -18,7 +18,7 @@ class Config(object):
   num_glimpses = 6
   num_classes = 2 # 2 for mnist pair
   max_grad_norm = 5.
-  training_steps_per_epoch = 100
+  training_steps_per_epoch = 1000
 
   step = 100000
   lr_start = 1e-3

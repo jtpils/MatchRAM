@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run -it -p 8888:8888 -v $(pwd):/notebooks/ siavashk/siemens:cpu
+docker run -it -p 8888:8888 -p 6006:6006 -v $(pwd):/notebooks/ siavashk/siemens:cpu

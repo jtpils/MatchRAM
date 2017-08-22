@@ -62,9 +62,9 @@ def main():
     n_steps = config.step
 
     # placeholders
-    images_ph1 = tf.placeholder(tf.float32, [None, config.original_size * config.original_size * config.num_channels])
-    images_ph2 = tf.placeholder(tf.float32, [None, config.original_size * config.original_size * config.num_channels])
-    labels_ph = tf.placeholder(tf.int64, [None])
+    images_ph1 = tf.placeholder(tf.float32, [None, config.original_size * config.original_size * config.num_channels], name="images_ph1")
+    images_ph2 = tf.placeholder(tf.float32, [None, config.original_size * config.original_size * config.num_channels], name="images_ph2")
+    labels_ph = tf.placeholder(tf.int64, [None], name="labels_ph")
 
     # Build the aux nets.
     with tf.variable_scope('glimpse_net'):
@@ -117,7 +117,7 @@ def main():
         w_logit = weight_variable((config.cell_output_size, config.num_classes))
         b_logit = bias_variable((config.num_classes,))
     logits = tf.nn.xw_plus_b(output, w_logit, b_logit)
-    softmax = tf.nn.softmax(logits)
+    softmax = tf.nn.softmax(logits, name='softmax')
 
     # cross-entropy.
     xent = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=labels_ph)

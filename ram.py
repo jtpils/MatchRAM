@@ -124,6 +124,7 @@ with tf.Session() as sess:
     images = np.tile(images, [config.M, 1])
     labels = np.tile(labels, [config.M])
     loc_net.samping = True
+    print(images_ph.shape, images.shape)
     adv_val, baselines_mse_val, xent_val, logllratio_val, \
         reward_val, loss_val, lr_val, _ = sess.run(
             [advs, baselines_mse, xent, logllratio,

@@ -51,8 +51,7 @@ def main():
     with env.begin(write=True) as txn:
         lmdbIndex = 0
         for index, (image, onehot) in enumerate(zip(images, onehots)):
-            if index > 50:
-                break
+            print 'Now creating a pair from here: ', index, images.shape[0]
             shuffled = random.sample(digits, len(digits))
             label = onehotToDigit(onehot)
             for digit in shuffled:
@@ -73,11 +72,6 @@ def main():
                             txn.put('{:08}'.format(lmdbIndex), datum.SerializeToString())
                             lmdbIndex += 1
                             break
-
-    # example = images[2, :].reshape(40, 40)
-    # label = onehotToDigit(onehots[2, :])
-    # show(example, label)
-    # show(image.reshape(40,40), label)
 
 if __name__ == '__main__':
     main()

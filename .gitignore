@@ -90,5 +90,6 @@ ENV/
 
 # Data
 MNIST_data/
+data/*
 
 .local/*

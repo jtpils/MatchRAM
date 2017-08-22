@@ -16,11 +16,14 @@ def show(frame1, frame2, label):
     pyplot.show()
 
 def main():
-    env = lmdb.open('test', readonly=True)
+    env = lmdb.open('data/mnistpair', readonly=True)
     with env.begin() as txn:
         cursor = txn.cursor()
         cursor.first()
+        index = 0
         while cursor.next():
+            if index > 10:
+                break
             _, value = cursor.item()
             datum = mnistpair_pb2.Datum()
             datum.ParseFromString(value)
@@ -30,8 +33,7 @@ def main():
             frame2 = frame2.reshape(datum.channels, datum.height, datum.width)
             label = datum.label
             show(np.squeeze(frame1), np.squeeze(frame2), label)
-
-
+            index += 1
 
 if __name__ == '__main__':
     main()

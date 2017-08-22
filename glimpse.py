@@ -57,8 +57,7 @@ class GlimpseNet(object):
 
   def __call__(self, loc):
     glimpse_input = self.get_glimpse(loc)
-    glimpse_input = tf.reshape(glimpse_input,
-                               (tf.shape(loc)[0], self.sensor_size))
+    glimpse_input = tf.reshape(glimpse_input, (tf.shape(loc)[0], self.sensor_size))
     g = tf.nn.relu(tf.nn.xw_plus_b(glimpse_input, self.w_g0, self.b_g0))
     g = tf.nn.xw_plus_b(g, self.w_g1, self.b_g1)
     l = tf.nn.relu(tf.nn.xw_plus_b(loc, self.w_l0, self.b_l0))
@@ -76,7 +75,7 @@ class LocNet(object):
 
   def __init__(self, config):
     self.loc_dim = config.loc_dim
-    self.input_dim = config.cell_output_size
+    self.input_dim = config.cell_output_size // 2
     self.loc_std = config.loc_std
     self._sampling = True
 

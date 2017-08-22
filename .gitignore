@@ -93,3 +93,7 @@ MNIST_data/
 data/*
 
 .local/*
+
+scripts/RAM.py
+
+output/

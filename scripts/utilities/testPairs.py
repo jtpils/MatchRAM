@@ -1,3 +1,4 @@
+import argparse
 import mnistpair_pb2
 import numpy as np
 import lmdb
@@ -15,14 +16,21 @@ def show(frame1, frame2, label):
     pyplot.title(label)
     pyplot.show()
 
+def parseArgs():
+    parser = argparse.ArgumentParser(description='Visual MNIST Pair Tester')
+    parser.add_argument('--mnist', dest='mnist', type=str)
+    parser.add_argument('--count', dest='count', type=str)
+    return parser.parse_args()
+
 def main():
-    env = lmdb.open('data/mnistpair', readonly=True)
+    args = parseArgs()
+    env = lmdb.open(args.mnist, readonly=True)
     with env.begin() as txn:
         cursor = txn.cursor()
         cursor.first()
         index = 0
         while cursor.next():
-            if index > 10:
+            if index > args.count:
                 break
             _, value = cursor.item()
             datum = mnistpair_pb2.Datum()

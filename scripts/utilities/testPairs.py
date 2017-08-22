@@ -18,8 +18,8 @@ def show(frame1, frame2, label):
 
 def parseArgs():
     parser = argparse.ArgumentParser(description='Visual MNIST Pair Tester')
-    parser.add_argument('--mnist', dest='mnist', type=str)
-    parser.add_argument('--count', dest='count', type=str)
+    parser.add_argument('--mnist', dest='mnist', default='data/mnistpair', type=str)
+    parser.add_argument('--count', dest='count', default=20, type=int)
     return parser.parse_args()
 
 def main():

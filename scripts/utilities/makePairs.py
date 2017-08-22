@@ -35,8 +35,8 @@ def show(example, label):
 
 def parseArgs():
     parser = argparse.ArgumentParser(description='MNIST Pair Maker')
-    parser.add_argument('--mnist', dest='mnist', type=str)
-    parser.add_argument('--output', dest='output', type=str)
+    parser.add_argument('--mnist', dest='mnist', default='data/affNIST/1.mat', type=str)
+    parser.add_argument('--output', dest='output', default='data/mnistpair', type=str)
     return parser.parse_args()
 
 def main():

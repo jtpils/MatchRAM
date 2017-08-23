@@ -1,4 +1,4 @@
-# RAM
+# MatchRAM
 A Recurrent Attention Model for Matching Two Images
 
 ## Environment

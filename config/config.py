@@ -2,9 +2,9 @@ class Config(object):
   win_size = 8
   bandwidth = win_size**2
   batch_size = 32
-  eval_batch_size = 100  # changed for mnist pair
+  eval_batch_size = 100
   loc_std = 0.22
-  original_size = 40 # 40 for mnistpair
+  original_size = 40
   num_channels = 1
   depth = 1
   sensor_size = win_size**2 * depth
@@ -15,8 +15,8 @@ class Config(object):
   loc_dim = 2
   cell_size = 512
   cell_out_size = cell_size
-  num_glimpses = 6
-  num_classes = 2 # 2 for mnist pair
+  num_glimpses = 10
+  num_classes = 2
   max_grad_norm = 5.
   training_steps_per_epoch = 1000
 

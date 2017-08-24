@@ -15,12 +15,12 @@ class Config(object):
   loc_dim = 2
   cell_size = 512
   cell_out_size = cell_size
-  num_glimpses = 10
+  num_glimpses = 6
   num_classes = 2
   max_grad_norm = 5.
-  training_steps_per_epoch = 1000
+  steps_per_epoch = 1000
 
-  step = 100000
+  epochs = 100
   lr_start = 1e-3
   lr_min = 1e-4
 

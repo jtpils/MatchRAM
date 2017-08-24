@@ -59,7 +59,6 @@ def main():
     seq2seq = tf.contrib.legacy_seq2seq
 
     config = Config()
-    n_steps = config.step
 
     # placeholders
     images_ph1 = tf.placeholder(tf.float32, [None, config.original_size * config.original_size * config.num_channels], name="images_ph1")
@@ -142,11 +141,11 @@ def main():
 
     # learning rate
     global_step = tf.get_variable('global_step', [], initializer=tf.constant_initializer(0), trainable=False)
-    training_steps_per_epoch = config.training_steps_per_epoch
+    steps_per_epoch = config.steps_per_epoch
     starter_learning_rate = config.lr_start
 
     # decay per training epoch
-    learning_rate = tf.train.exponential_decay(starter_learning_rate, global_step, training_steps_per_epoch, 0.97, staircase=True)
+    learning_rate = tf.train.exponential_decay(starter_learning_rate, global_step, steps_per_epoch, 0.97, staircase=True)
     learning_rate = tf.maximum(learning_rate, config.lr_min)
     opt = tf.train.AdamOptimizer(learning_rate)
     train_op = opt.apply_gradients(zip(grads, var_list), global_step=global_step)
@@ -161,35 +160,36 @@ def main():
         cursor, framesval1, framesval2, labelsval = getBatch(cursor, width, config.eval_batch_size)
         with tf.Session() as sess:
             sess.run(tf.initialize_all_variables())
-            for i in xrange(n_steps):
+            for epoch in xrange(config.epochs):
                 cursor, frames1, frames2, labels = getBatch(cursor, width, config.batch_size)
                 frames1 = np.tile(frames1, [config.M, 1])
                 frames2 = np.tile(frames2, [config.M, 1])
                 labels = np.tile(labels, [config.M])
                 loc_net1.sampling = True
                 loc_net2.sampling = True
-                adv_val, baselines_mse_val, xent_val, logllratio_val, reward_val, loss_val, lr_val, _ \
-                    = sess.run([advs, baselines_mse, xent, logllratio, reward, loss, learning_rate, train_op],
-                        feed_dict={ images_ph1: frames1, images_ph2: frames2, labels_ph: labels })
-                if i and i % 100 == 0:
-                    logging.info('step {}: lr = {:3.6f}'.format(i, lr_val))
-                    logging.info('step {}: reward = {:3.4f}\tloss = {:3.4f}\txent = {:3.4f}'.format(i, reward_val, loss_val, xent_val))
-                    logging.info('llratio = {:3.4f}\tbaselines_mse = {:3.4f}'.format(logllratio_val, baselines_mse_val))
+                for step in xrange(steps_per_epoch):
+                    adv_val, baselines_mse_val, xent_val, logllratio_val, reward_val, loss_val, lr_val, _ \
+                        = sess.run([advs, baselines_mse, xent, logllratio, reward, loss, learning_rate, train_op],
+                            feed_dict={ images_ph1: frames1, images_ph2: frames2, labels_ph: labels })
+                    if step and step % (steps_per_epoch // 10) == 0:
+                        logging.info('epoch {} step {}: lr = {:3.6f}'.format(epoch, step, lr_val))
+                        logging.info('epoch {} step {}: reward = {:3.4f}\tloss = {:3.4f}\txent = {:3.4f}'.format(epoch, step, reward_val, loss_val, xent_val))
+                        logging.info('llratio = {:3.4f}\tbaselines_mse = {:3.4f}'.format(logllratio_val, baselines_mse_val))
 
+                # Do validation once per epoch
                 correct_cnt = 0
-                if i and i % training_steps_per_epoch == 0:
-                    framesnew1 = np.tile(framesval1, [config.M, 1])
-                    framesnew2 = np.tile(framesval2, [config.M, 1])
-                    labelsnew = np.tile(labelsval, [config.M])
-                    softmax_val = sess.run(softmax, feed_dict={ images_ph1: framesnew1, images_ph2: framesnew2, labels_ph: labelsnew })
-                    softmax_val = np.reshape(softmax_val, [config.M, -1, config.num_classes])
-                    softmax_val = np.mean(softmax_val, 0)
-                    pred_labels_val = np.argmax(softmax_val, 1)
-                    pred_labels_val = pred_labels_val.flatten()
-                    correct_cnt += np.sum(pred_labels_val == labelsval)
-                    acc = correct_cnt / config.eval_batch_size
-                    logging.info('valid accuracy = {}'.format(acc))
-                    saver.save(sess, args.save, global_step=i)
+                framesnew1 = np.tile(framesval1, [config.M, 1])
+                framesnew2 = np.tile(framesval2, [config.M, 1])
+                labelsnew = np.tile(labelsval, [config.M])
+                softmax_val = sess.run(softmax, feed_dict={ images_ph1: framesnew1, images_ph2: framesnew2, labels_ph: labelsnew })
+                softmax_val = np.reshape(softmax_val, [config.M, -1, config.num_classes])
+                softmax_val = np.mean(softmax_val, 0)
+                pred_labels_val = np.argmax(softmax_val, 1)
+                pred_labels_val = pred_labels_val.flatten()
+                correct_cnt += np.sum(pred_labels_val == labelsval)
+                acc = correct_cnt / config.eval_batch_size
+                logging.info('valid accuracy = {}'.format(acc))
+                saver.save(sess, args.save, global_step=epoch)
 
 if __name__ == '__main__':
     main()

@@ -12,20 +12,20 @@ def parseArgs():
 def main():
     args = parseArgs()
     readEnv = lmdb.open(args.data, readonly=True)
+    writeEnv = lmdb.open(args.output, map_size=1024 * 1024 * 1024 * 1024)
 
-    with readEnv.begin() as txn:
-        cursor = txn.cursor()
-        cursor.last()
-        key, _ = cursor.item()
-        print(type(key))
-
-    # print('Finished reading dataset, now shuffling')
-    # shuffle(mnist)
-    #
-    # print('Writing the dataset')
-    # with writeEnv.begin(write=True) as txn:
-    #     for key, value in mnist:
-    #         txn.put(key, value)
+    with readEnv.begin() as readTxn:
+        with writeEnv.begin(write=True) as writeTxn:
+            cursor = readTxn.cursor()
+            cursor.last()
+            lastKey, _ = cursor.item()
+            keys = ['{:08}'.format(k) for k in range(int(lastKey))]
+            shuffle(keys)
+            writeIndex = 0
+            for key in keys:
+                value = readTxn.get(key)
+                writeTxn.put('{:08}'.format(writeIndex), value)
+                writeIndex += 1
 
 if __name__ == '__main__':
     main()

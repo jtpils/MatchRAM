@@ -32,7 +32,7 @@ def getBatch(cursor, imageSize, batchSize):
 
 def parseArgs():
     parser = argparse.ArgumentParser(description='Dual RAM Accuracy')
-    parser.add_argument('--meta', dest='meta', default='output/dualram-100.meta', type=str)
+    parser.add_argument('--meta', dest='meta', default='output/dualram-0.meta', type=str)
     parser.add_argument('--ckpt', dest='ckpt', default='output', type=str)
     parser.add_argument('--data', dest='data', default='data/mnistpair', type=str)
     parser.add_argument('--batch', dest='batch', default=1000, type=int)
@@ -58,17 +58,18 @@ def main():
 
         frames1 = np.tile(frames1, [args.mc, 1])
         frames2 = np.tile(frames2, [args.mc, 1])
-        labels = np.tile(labels, [args.mc])
+        labels_val = np.tile(labels, [args.mc])
         graph = tf.get_default_graph()
         softmax = graph.get_tensor_by_name("softmax:0")
         images_ph1 = graph.get_tensor_by_name("images_ph1:0")
         images_ph2 = graph.get_tensor_by_name("images_ph2:0")
         labels_ph = graph.get_tensor_by_name("labels_ph:0")
-        softmax_val = sess.run(softmax, feed_dict={ images_ph1: frames1, images_ph2: frames2, labels_ph: labels })
+        softmax_val = sess.run(softmax, feed_dict={ images_ph1: frames1, images_ph2: frames2, labels_ph: labels_val })
         softmax_val = np.reshape(softmax_val, [args.mc, -1, args.classes])
         softmax_val = np.mean(softmax_val, 0)
         pred_labels_val = np.argmax(softmax_val, 1)
         pred_labels_val = pred_labels_val.flatten()
+        print(pred_labels_val.shape, labels.shape)
         correct_cnt = np.sum(pred_labels_val == labels)
         acc = correct_cnt / args.batch
         print('valid accuracy = {}'.format(acc))

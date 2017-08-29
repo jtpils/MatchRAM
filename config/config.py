@@ -1,7 +1,7 @@
 class Config(object):
   win_size = 8
   bandwidth = win_size**2
-  batch_size = 32
+  batch_size = 128
   eval_batch_size = 100
   loc_std = 0.22
   original_size = 40
@@ -15,12 +15,12 @@ class Config(object):
   loc_dim = 2
   cell_size = 512
   cell_out_size = cell_size
-  num_glimpses = 6
+  num_glimpses = 36
   num_classes = 2
   max_grad_norm = 5.
-  steps_per_epoch = 1000
+  steps_per_epoch = 100
 
-  epochs = 100
+  epochs = 1000
   lr_start = 1e-3
   lr_min = 1e-4
 

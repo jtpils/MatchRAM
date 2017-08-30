@@ -1,8 +1,8 @@
 class Config(object):
   win_size = 8
   bandwidth = win_size**2
-  batch_size = 128
-  eval_batch_size = 100
+  batch_size = 32
+  eval_batch_size = 1000
   loc_std = 0.22
   original_size = 40
   num_channels = 1
@@ -12,6 +12,7 @@ class Config(object):
   hg_size = hl_size = 128
   g_size = 256
   cell_output_size = 512
+  hidden_size = 50
   loc_dim = 2
   cell_size = 512
   cell_out_size = cell_size

@@ -1,7 +1,7 @@
 class Config(object):
   win_size = 8
   bandwidth = win_size**2
-  batch_size = 32
+  batch_size = 128
   eval_batch_size = 1000
   loc_std = 0.22
   original_size = 40

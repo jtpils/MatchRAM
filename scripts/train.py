@@ -37,8 +37,8 @@ def getBatch(cursor, imageSize, batchSize):
     while index < batchSize:
         _, value = cursor.item()
         datum.ParseFromString(value)
-        frame1 = np.fromstring(datum.frames[0], dtype=np.uint8)
-        frame2 = np.fromstring(datum.frames[1], dtype=np.uint8)
+        frame1 = np.fromstring(datum.frames[0], dtype=np.uint64)
+        frame2 = np.fromstring(datum.frames[1], dtype=np.uint64)
         frames1 = np.vstack((frames1, frame1))
         frames2 = np.vstack((frames2, frame2))
         labels = np.hstack((labels, datum.label))
@@ -49,7 +49,7 @@ def getBatch(cursor, imageSize, batchSize):
 
 def parseArgs():
     parser = argparse.ArgumentParser(description='Train Dual Attention Model on Paired Data')
-    parser.add_argument('--data', dest='data', default='data/mnistshuffled', type=str)
+    parser.add_argument('--data', dest='data', default='data/mnistexactshuffled', type=str)
     parser.add_argument('--save', dest='save', default='output/dualram', type=str)
     return parser.parse_args()
 
@@ -113,12 +113,9 @@ def main():
     output = outputs[-1]
     # Build classification network.
     with tf.variable_scope('cls'):
-        w_hidden = weight_variable((config.cell_output_size, config.hidden_size))
-        b_hidden = bias_variable((config.hidden_size,))
-        w_logit = weight_variable((config.hidden_size, config.num_classes))
+        w_logit = weight_variable((config.cell_output_size, config.num_classes))
         b_logit = bias_variable((config.num_classes,))
-    hidden = tf.nn.relu(tf.nn.xw_plus_b(output, w_hidden, b_hidden))
-    logits = tf.nn.xw_plus_b(hidden, w_logit, b_logit)
+    logits = tf.nn.xw_plus_b(output, w_logit, b_logit)
     softmax = tf.nn.softmax(logits, name='softmax')
 
     # cross-entropy.

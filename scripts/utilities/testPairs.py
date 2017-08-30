@@ -18,7 +18,7 @@ def show(frame1, frame2, key, label):
 
 def parseArgs():
     parser = argparse.ArgumentParser(description='Visual MNIST Pair Tester')
-    parser.add_argument('--mnist', dest='mnist', default='data/mnistshuffled', type=str)
+    parser.add_argument('--mnist', dest='mnist', default='data/mnistexactpair', type=str)
     parser.add_argument('--count', dest='count', default=20, type=int)
     return parser.parse_args()
 
@@ -35,9 +35,9 @@ def main():
             key, value = cursor.item()
             datum = mnistpair_pb2.Datum()
             datum.ParseFromString(value)
-            frame1 = np.fromstring(datum.frames[0], dtype=np.uint8)
+            frame1 = np.fromstring(datum.frames[0], dtype=np.uint64)
             frame1 = frame1.reshape(datum.channels, datum.height, datum.width)
-            frame2 = np.fromstring(datum.frames[1], dtype=np.uint8)
+            frame2 = np.fromstring(datum.frames[1], dtype=np.uint64)
             frame2 = frame2.reshape(datum.channels, datum.height, datum.width)
             label = datum.label
             show(np.squeeze(frame1), np.squeeze(frame2), key, label)

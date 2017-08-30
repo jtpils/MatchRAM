@@ -5,8 +5,8 @@ import lmdb
 
 def parseArgs():
     parser = argparse.ArgumentParser(description='Dual RAM Accuracy')
-    parser.add_argument('--data', dest='data', default='data/mnistpair', type=str)
-    parser.add_argument('--output', dest='output', default='data/mnistshuffled', type=str)
+    parser.add_argument('--data', dest='data', default='data/mnistexactpair', type=str)
+    parser.add_argument('--output', dest='output', default='data/mnistexactshuffled', type=str)
     return parser.parse_args()
 
 def main():
